@@ -606,14 +606,22 @@ c.event.mouseHooks;c.event.special.mousewheel={setup:function(){if(this.addEvent
     </script>
     <script>
      jQuery(function($, undefined) {
-    $('#vid').terminal({
-        add: function(a, b) {
-            this.echo(a + b);
-        },
-        bar: {
-            sub: function(a, b) {
-                this.echo(a - b);
-            }
+    $('#vid').terminal(function(cmd, term) {
+        var finish = false;
+        var msg = "Processing";
+        term.set_prompt('> ');
+        typed_message(term, msg, 200, function() {
+            finish = true;
+        });
+        var args = {command: cmd};
+        var rules = {
+         '/select/i' : function(keyword){ return keyword}
+    };
+      var l = new Lexed(cmd, rules);
+
+      var token;
+      while ((token = l.lex()) != Lexed.EOF) {
+            console.log(token); // writes Hello!
         }
     }, 
 
