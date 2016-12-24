@@ -610,7 +610,7 @@ c.event.mouseHooks;c.event.special.mousewheel={setup:function(){if(this.addEvent
         var finish = false;
         var rules = {
          '/select/i' : function(keyword){ return keyword}
-    };
+        };
       var l = new Lexed(cmd, rules);
 
       var token;
@@ -618,6 +618,9 @@ c.event.mouseHooks;c.event.special.mousewheel={setup:function(){if(this.addEvent
              term.echo(token);
             //console.log(token); // writes Hello!
         }
+      if(cmd == token){
+        term.echo(JSON.stringify(token));
+      }
     }, 
 
         {
