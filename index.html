@@ -618,8 +618,11 @@ c.event.mouseHooks;c.event.special.mousewheel={setup:function(){if(this.addEvent
              term.echo(token);
             //console.log(token); // writes Hello!
         }
-      if(cmd == token){
+      if(cmd == "token"){
         term.echo(JSON.stringify(token));
+      }
+      if(cmd == "help"){
+        term.echo('jjj');
       }
     }, 
 
