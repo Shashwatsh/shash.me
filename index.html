@@ -607,27 +607,13 @@ c.event.mouseHooks;c.event.special.mousewheel={setup:function(){if(this.addEvent
     <script>
      jQuery(function($, undefined) {
     $('#vid').terminal(function(cmd, term) {
-        var finish = false;
-        var rules = {
-         '/select/i' : function(keyword){ return keyword}
-        };
-      var l = new Lexed(cmd, rules);
-
-      var token;
-      while ((token = l.lex()) != Lexed.EOF) {
-             term.echo(token);
-            //console.log(token); // writes Hello!
-        }
       if(cmd == "token"){
         term.echo(JSON.stringify(token));
       }
       if(cmd == "help"){
         term.echo('jjj');
       }
-    }
-                       }, 
-
-        {
+    }, {
         name: 'terminal' ,
         height: 300,
         width: 450,
