@@ -608,12 +608,6 @@ c.event.mouseHooks;c.event.special.mousewheel={setup:function(){if(this.addEvent
      jQuery(function($, undefined) {
     $('#vid').terminal(function(cmd, term) {
         var finish = false;
-        var msg = "Processing";
-        term.set_prompt('> ');
-        typed_message(term, msg, 200, function() {
-            finish = true;
-        });
-        var args = {command: cmd};
         var rules = {
          '/select/i' : function(keyword){ return keyword}
     };
