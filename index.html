@@ -508,7 +508,11 @@ c.event.mouseHooks;c.event.special.mousewheel={setup:function(){if(this.addEvent
           padding: 20px;
         }
 
-
+        .center {
+           display: flex; /* activates the power of flexbox */
+           align-items: center; /* align items vertically */
+           justify-content: center; /* align items horizontally */
+        }
         pre {
           white-space:pre-wrap; word-wrap:break-word; overflow:auto;
         }
@@ -570,10 +574,10 @@ c.event.mouseHooks;c.event.special.mousewheel={setup:function(){if(this.addEvent
           <div class="title"><b>Shash.me</b> <span style="font-size: 12px; display: block; margin-top: 6px; color: #999">Shashwat Shagun's Website/Blog. inspired by <a href="http://hyper.is">Hyperterm</a></span></div>
         </div>
         <div id="video">
-          <center>
-          <div id="vid" style="margin-top: 170px;border: 1px solid white;border-radius:5px;"></div>
-          </center>
+          <div class="center">
+          <div id="vid" style="margin-top: 170px;border: 1px solid white;border-radius:5px;"></div> 
           <!--<video id="vid" src="https://cdn.zeit.co/hyper/hyperapp.mp4" height="100%" autoplay muted></video>-->
+          </div>
         </div>
         <div class="top-content">
           <div class="top-download">
@@ -581,7 +585,7 @@ c.event.mouseHooks;c.event.special.mousewheel={setup:function(){if(this.addEvent
             <!--<span class="other-downloads"><a href="#installation">Other platforms</a></span>-->
           </div>
 
-          <div id="arrow"><a href="#installation"><img src="static/arrow.svg" width="18" /></a></div>
+          <div id="arrow"><a href="#content"><img src="static/arrow.svg" width="18" /></a></div>
         </div>
       </div>
 
