@@ -1,630 +1,406 @@
 <!doctype html>
 <html>
-  <head>
+
+<head>
     <title>Shashwat</title>
     <meta charset="utf-8" />
     <meta name="viewport" content="initial-scale=1.0" />
     <meta name="theme-color" content="#000000">
-    
+
     <link rel="shortcut icon" href="favicon.png" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lunr.js/1.0.0/lunr.min.js"></script>
     <script src="lexed.js"></script>
     <script>
-     (function(c){function g(a){var b=a||window.event,i=[].slice.call(arguments,1),e=0,h=0,f=0;a=c.event.fix(b);a.type="mousewheel";if(b.wheelDelta)e=b.wheelDelta/120;if(b.detail)e=-b.detail/3;f=e;if(b.axis!==undefined&&b.axis===b.HORIZONTAL_AXIS){f=0;h=-1*e}if(b.wheelDeltaY!==undefined)f=b.wheelDeltaY/120;if(b.wheelDeltaX!==undefined)h=-1*b.wheelDeltaX/120;i.unshift(a,e,h,f);return(c.event.dispatch||c.event.handle).apply(this,i)}var d=["DOMMouseScroll","mousewheel"];if(c.event.fixHooks)for(var j=d.length;j;)c.event.fixHooks[d[--j]]=
-c.event.mouseHooks;c.event.special.mousewheel={setup:function(){if(this.addEventListener)for(var a=d.length;a;)this.addEventListener(d[--a],g,false);else this.onmousewheel=g},teardown:function(){if(this.removeEventListener)for(var a=d.length;a;)this.removeEventListener(d[--a],g,false);else this.onmousewheel=null}};c.fn.extend({mousewheel:function(a){return a?this.bind("mousewheel",a):this.trigger("mousewheel")},unmousewheel:function(a){return this.unbind("mousewheel",a)}})})(jQuery);
+        (function(c) {
+            function g(a) {
+                var b = a || window.event,
+                    i = [].slice.call(arguments, 1),
+                    e = 0,
+                    h = 0,
+                    f = 0;
+                a = c.event.fix(b);
+                a.type = "mousewheel";
+                if (b.wheelDelta) e = b.wheelDelta / 120;
+                if (b.detail) e = -b.detail / 3;
+                f = e;
+                if (b.axis !== undefined && b.axis === b.HORIZONTAL_AXIS) {
+                    f = 0;
+                    h = -1 * e
+                }
+                if (b.wheelDeltaY !== undefined) f = b.wheelDeltaY / 120;
+                if (b.wheelDeltaX !== undefined) h = -1 * b.wheelDeltaX / 120;
+                i.unshift(a, e, h, f);
+                return (c.event.dispatch || c.event.handle).apply(this, i)
+            }
+            var d = ["DOMMouseScroll", "mousewheel"];
+            if (c.event.fixHooks)
+                for (var j = d.length; j;) c.event.fixHooks[d[--j]] =
+                    c.event.mouseHooks;
+            c.event.special.mousewheel = {
+                setup: function() {
+                    if (this.addEventListener)
+                        for (var a = d.length; a;) this.addEventListener(d[--a], g, false);
+                    else this.onmousewheel = g
+                },
+                teardown: function() {
+                    if (this.removeEventListener)
+                        for (var a = d.length; a;) this.removeEventListener(d[--a], g, false);
+                    else this.onmousewheel = null
+                }
+            };
+            c.fn.extend({
+                mousewheel: function(a) {
+                    return a ? this.bind("mousewheel", a) : this.trigger("mousewheel")
+                },
+                unmousewheel: function(a) {
+                    return this.unbind("mousewheel", a)
+                }
+            })
+        })(jQuery);
     </script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.terminal/0.11.23/js/jquery.terminal.min.js"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/jquery.terminal/0.11.23/css/jquery.terminal.min.css" rel="stylesheet"/>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/jquery.terminal/0.11.23/css/jquery.terminal.min.css" rel="stylesheet" />
     <style>
-      * {
-        margin: 0;
-        padding: 0;
-        text-rendering: geometricPrecision;
+        /** {
         box-sizing: border-box;
-      }
-
-      body, html {
-        background: #000;
-        color: #ccc;
-        font: 12px Menlo, "DejaVu Sans Mono", "Lucida Console", monospace;
-      }
-      .command{
-        text-align: left;
-      }
-      .terminal-output span{
-        text-align: left;
-      }
-      #header {
-        position: fixed;
-        top: 15px;
-        right: 20px;
-        z-index: 10000;
-        display: flex;
-        transition: all 0.3s ease;
-        transition-property: transform, opacity;
-      }
-
-      #header span {
-        color: #999;
-        font-family: -apple-system, BlinkMacSystemFont,
-          "Segoe UI", "Roboto", "Oxygen",
-          "Ubuntu", "Cantarell", "Fira Sans",
-          "Droid Sans", "Helvetica Neue", sans-serif;
-        display: flex;
-        align-items: center;
-        margin-right: 10px;
-      }
-
-      #header a {
-        color: #999;
-        text-decoration: none;
-      }
-
-      #header a img {
-        height: 16px;
-        margin-left: 6px;
-        margin-right: 4px;
-      }
-
-      #header a:hover {
-        color: #FF2E88;
-      }
-
-      #header a.download-link {
-        color: #FF2E88;
-      }
-
-      #header.hidden {
-        transform: translateY(-35px);
-        opacity: 0;
-      }
-
-      #logo {
-        position: absolute;
-        left: 0;
-        right: 0;
-        top: 0;
-        padding: 50px 0 40px;
-        font-family: -apple-system, BlinkMacSystemFont,
-          "Segoe UI", "Roboto", "Oxygen",
-          "Ubuntu", "Cantarell", "Fira Sans",
-          "Droid Sans", "Helvetica Neue", sans-serif;
-        text-align: center;
-        z-index: 1000;
-      }
-
-      #logo img {
-        display: block;
-        margin: 0 auto 10px;
-      }
-
-      #logo .title, #logo .subtitle {
-        padding: 3px 0;
-      }
-
-      #logo .title {
-        font-size: 16px;
-      }
-
-      #logo .title b {
-        font-weight: 500;
-      }
-
-      #logo .subtitle {
-        color: #9B9B9B;
-      }
-
-      #top {
-        height: 100vh;
-        width: 100vw;
-        position: relative;
-        text-align: center;
-        max-width: 100%;
-      }
-
-      #top .top-content {
-        position: absolute;
-        bottom: 20px;
-        left: 50%;
-        transform: translateX(-50%);
-        opacity: 0;
-        animation-name: arrow-appear;
-        animation-delay: 2s;
-        animation-duration: 500ms;
-        animation-timing-function: ease;
-        animation-fill-mode: forwards;
-      }
-
-      .top-download {
-        position: relative;
-        bottom: 75px;
-        font-family: -apple-system, BlinkMacSystemFont,
-          "Segoe UI", "Roboto", "Oxygen",
-          "Ubuntu", "Cantarell", "Fira Sans",
-          "Droid Sans", "Helvetica Neue", sans-serif;
-      }
-
-      .download-button {
-        background: #50E3C2;
-        color: #494949;
-        height: 42px;
-        display: flex;
-        align-items: center;
-        padding: 0 20px;
-        margin-bottom: 10px;
-        text-decoration: none;
-        transition: background .12s ease-in-out;
-      }
-
-      .download-button:hover {
-        background: #72EBD0;
-      }
-
-      .download-button svg {
-        color: #2EAA8F;
-      }
-
-      .download-button svg#fallback-icon {
-        margin-left: 10px;
-      }
-
-      .download-button svg:not(#fallback-icon) {
-        margin-right: 10px;
-      }
-
-      .download-button strong {
-        color: #000000;
-      }
-
-      #arrow {
-        position: absolute;
-        left: 50%;
-        margin-left: -9px;
-        bottom: 20px;
-      }
-
-      @keyframes arrow-appear {
-        from {
-          opacity: 0;
-        }
-        to {
-          bottom: 0;
-          opacity: 1;
-        }
-      }
-
-      @keyframes arrow-video-finish {
-        from {
-          opacity: 1;
-        }
-        to {
-          bottom: 0;
-          opacity: 1;
-        }
-      }
-
-
-      #video {
-        height: 100vh;
-        bottom: 0;
-        width: 100%;
-        position: absolute;
-      }
-
-      #video video {
-        height: 100%;
-        width: 100%;
-      }
-
-      #loading:before {
-        content: 'Loading...';
-        position: absolute;
-        display: block;
-        left: 0;
-        top: 50%;
-        right: 0;
-        color: #666;
-        opacity: 0;
-        animation-name: appear;
-        animation-delay: 2s;
-        animation-duration: 500ms;
-        animation-timing-function: ease;
-        animation-fill-mode: forwards;
-      }
-
-      @keyframes appear {
-        from {
-          opacity: 0;
-        }
-        to {
-          opacity: 1;
-        }
-      }
-
-      #poster {
-        position: absolute;
-        left: 0;
-        right: 0;
-        bottom: 0;
-      }
-
-      #poster img {
-        margin: auto;
-      }
-
-      #content {
-        max-width: 800px;
-        margin: auto;
-      }
-
-      #content a, .other-downloads a {
-        color: #FF2E88;
-        text-decoration: none;
-        border-bottom: 1px solid #FF2E88;
-      }
-
-      #content a:hover, .other-downloads a:hover {
-        background: #FF2E88;
-        color: #fff;
-      }
-
-      #content h2, #content h3 {
-        font-size: 12px;
-        font-weight: bold;
-        color: #ccc;
-        margin: 0 0 30px 0;
-        padding-top: 30px;
-      }
-
-      #content h2 a, #content h3 a {
-        color: #ccc;
-        border-bottom-width: 0;
-      }
-
-      #content p {
-        margin: 0 0 20px;
-        line-height: 18px;
-      }
-
-      #content h2:before {
-        content: '## ';
-      }
-
-      #content h3:before {
-        content: '### ';
-      }
-
-      #content code {
-        font: 12px Menlo, "DejaVu Sans Mono", "Lucida Console", monospace;
-      }
-
-      #content p code, #content li code, #content td code {
-        color: #fff;
-      }
-
-      #content p code:before, #content p code:after,
-      #content td code:before, #content td code:after,
-      #content li code:before, #content li code:after {
-        content: '`';
-      }
-
-      #content pre {
-        margin: 30px;
-        color: #50E3C2;
-        line-height: 18px;
-      }
-
-      #content table thead td {
-        color: #999;
-        font-size: 10px;
-      }
-
-      #content table {
-        width: 100%;
-        border-collapse: collapse;
-      }
-
-      #content td > table {
-        margin: 0;
-      }
-
-      #content table td {
-        vertical-align: top;
-        border: 1px solid #444;
-        line-height: 15px;
-        position: relative;
-      }
-
-      #content table td.highlighted:after {
-        position: absolute;
-        content: "";
-        border: 1px solid #50E3C2;
-        width: 100%;
-        height: 100%;
-        top: -1px;
-        left: -1px;
-        pointer-events: none;
-      }
-
-      #content table td.invisible-top-left {
-        border-top: 0;
-        border-left: 0;
-      }
-
-      #content #installation-table a {
-        border-bottom: none;
-        transition: color 0.3s ease;
-      }
-
-      #content #installation-table a:hover {
-        background: none;
-        color: #50E3C2;
-      }
-
-      #content #installation-table td:not(:first-child) {
-        text-align: center;
-      }
-
-      #content #installation-table td:not(.highlighted) img {
-        opacity: 0;
-        transition: opacity 0.3s ease;
-      }
-
-      #content #installation-table td a:hover img {
-        opacity: 1;
-      }
-
-      #content #installation-table td.highlighted a {
-        color: #50E3C2;
-      }
-
-      #content #installation-table {
-        color: #FFF;
-      }
-
-      #content #installation-table td[id^="td"] {
-        padding: 0;
-      }
-
-      #content #installation-table a {
-        display: block;
-        padding: 10px;
-      }
-
-      #content td.soon {
-        color: #555;
-      }
-
-      #content td {
-        padding: 10px;
-      }
-
-      #content table.config td:nth-child(2) {
-        width: 30%;
-        color: #999;
-      }
-
-      #content table.config tbody td:first-child {
-        color: #fff;
-      }
-
-      #content table.api tbody td:first-child {
-        color: #fff;
-      }
-
-      #content table.api > tbody > tr > td:nth-child(2) {
-        width: 13%;
-      }
-
-      #content table.api tbody tbody td:first-child {
-        width: 20%;
-      }
-
-      #content td > p:first-child {
-        margin-top: 0;
-      }
-
-      #content ul {
-        margin: 20px 10px;
-      }
-
-      #content ul li {
-        list-style-type: none;
-        line-height: 18px;
-        margin: 5px 0;
-        padding-left: 20px;
-      }
-
-      #content ul li:before {
-        content: '-';
-        color: #999;
-        position: absolute;
-        margin-left: -20px;
-      }
-
-      #content p b {
-        color: #fff;
-      }
-
-      @media screen and (max-height: 500px) {
-        .title {
-          display: none;
-        }
-      }
-
-      @media screen and (max-height: 550px) {
-        .title span {
-          display: none !important;
-        }
-      }
-
-      @media screen and (max-height: 650px) {
-        #logo img {
-          height: 50px;
-          width: auto;
-          padding: 0;
-          margin-top: 0;
-        }
-      }
-
-      @media screen and (max-height: 700px) {
-        #logo {
-          padding: 30px 0 0;
-        }
-      }
-
-      @media screen and (max-width: 800px) {
-        #content table {
-          margin-left: 0;
-          margin-right: 0;
-        }
-        #download-for {
-          display: none !important;
-        }
-        #header {
-          width:300px;
-          margin: 0 auto;
-        }
-      }
-
-      @media screen and (max-width: 700px) {
-        #header {
-          text-align: center;
-          padding: 20px 0;
-          position: static;
-        }
-
-        #video video {
-          display: none;
-        }
-
-        #video {
-          background: no-repeat center; /*url('https://cdn.zeit.co/hyper/hyperapp.gif')*/
-          background-size: 100%;
-          height: 100vh;
-        }
-
-        #content {
-          padding: 20px;
-        }
-
-        .center {
-           display: flex; /* activates the power of flexbox */
-           align-items: center; /* align items vertically */
-           justify-content: center; /* align items horizontally */
-        }
-        pre {
-          white-space:pre-wrap; word-wrap:break-word; overflow:auto;
-        }
-
-        #content table {
-          margin-left: 0;
-          margin-right: 0;
-        }
-
-        #content table td {
-          width: 50% !important;
-        }
-
-        #content table td:nth-child(3) {
-          display: none;
-        }
-
-        #content .table-note:after {
-          margin: 15px 0;
-          content: "Please note: the complete table information is available in bigger resolutions!";
-          display: block;
-          color: #999;
-        }
-
-        #content img {
-          max-width: 100%;
-          height: auto;
-        }
-
-        #arrow {
-          display: none;
-        }
-      }
-
-      .is-hidden {
-        display: none;
-      }
-    </style>
-  </head>
-  <body>
-    <div id="main">
-      <div id="header">
-        <!--<span><a target="_blank" href="https://zeit.co">&#9650;</a></span>-->
-        <div style="">
-        <span><a target="_blank" href="https://github.com/shashwatsh">GitHub</a></span>
-        </div>
-        <span><b>MIT</b></span>
-        <!--<span><span id="download-for">Download for:</span>
-          <a href="#installation" class="download-link"><img src="static/apple-logo.svg"/></a>
-          <a href="#installation" class="download-link"><img src="static/windows-logo.svg"/></a>
-          <a href="#installation" class="download-link"><img src="static/linux-logo.svg"/></a>
-        </span>-->
-      </div>
-
-      <div id="top">
-        <div id="logo">
-          <img width='40' height='40' title='' alt='' src='static/logo.png' style="background:white;border-radius:50px;">
-
-          <div class="title"><b>Shash.me</b> <span style="font-size: 12px; display: block; margin-top: 6px; color: #999">Shashwat Shagun's Website/Blog. inspired by <a href="http://hyper.is">Hyperterm</a></span></div>
-        </div>
-        <div id="video">
-          <div class="center">
-          <div id="vid" style="border: 1px solid white;border-radius:5px;"></div> 
-          <!--<video id="vid" src="https://cdn.zeit.co/hyper/hyperapp.mp4" height="100%" autoplay muted></video>-->
-          </div>
-        </div>
-        <div class="top-content">
-          <div class="top-download">
-            
-            <!--<span class="other-downloads"><a href="#installation">Other platforms</a></span>-->
-          </div>
-
-          <div id="arrow"><a href="#content"><img src="static/arrow.svg" width="18" /></a></div>
-        </div>
-      </div>
-
-      <div id="content">
+      }*/
         
+        body,
+        html {
+            background: #fff;
+            color: black;
+            font: 12px Menlo, "DejaVu Sans Mono", "Lucida Console", monospace;
+        }
+        
+        .command {
+            text-align: left;
+        }
+        
+        .terminal-output span {
+            text-align: left;
+        }
+        
+        #arrow {
+            position: relative;
+            left: 50%;
+            margin-left: -9px;
+            bottom: 20px;
+            width: 100px;
+            height: auto;
+        }
+        
+        @keyframes arrow-appear {
+            from {
+                opacity: 0;
+            }
+            to {
+                bottom: 0;
+                opacity: 1;
+            }
+        }
+        
+        @keyframes arrow-video-finish {
+            from {
+                opacity: 1;
+            }
+            to {
+                bottom: 0;
+                opacity: 1;
+            }
+        }
+        
+        #video {
+            height: 100vh;
+            bottom: 0;
+            width: 100%;
+        }
+        
+        #video video {
+            height: 100%;
+            width: 100%;
+        }
+        
+        @keyframes appear {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+        
+        #header {
+            text-align: center;
+            padding: 20px 0;
+            position: static;
+        }
+        
+        #video video {
+            display: none;
+        }
+        
+        #video {
+            background: no-repeat center;
+            background-size: 100%;
+            height: 100vh;
+        }
+        
+        #content {
+            padding: 20px;
+        }
+        
+        .center {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate( -50%, -50%);
+        }
+        
+        pre {
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            overflow: auto;
+        }
+        /*#arrow {
+            display: none;
+        }*/
+        
+        .is-hidden {
+            display: none;
+        }
+        
+        .avatar {
+            width: 100px;
+            height: 100px;
+            position: relative;
+            left: -50%;
+        }
+        
+        .avatar-container {
+            position: absolute;
+            left: 50%;
+            right: 50%;
+            top: 10%;
+        }
+        
+        .top-content {
+            position: absolute;
+            bottom: 50px;
+            left: 50%;
+            transform: translateX(-50%);
+            opacity: 0;
+            animation-name: arrow-appear;
+            animation-delay: 2s;
+            animation-duration: 500ms;
+            animation-timing-function: ease;
+            animation-fill-mode: forwards;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="avatar-container">
+        <div class="avatar">
+            <img src="static/avatar.png" alt=":P" style="position: relative; left: -50%; border-radius: 50%; width: inherit; height: inherit;">
+        </div>
+    </div>
+    <div class="center">
+
+        <div id="vid" style="border: 1px solid #555; border-radius:5px;"></div>
+
+    </div>
+    <div class="top-content">
+        <div id="arrow">
+            <a href="#content"><img src="static/arrow.svg" width="18" style="color: black;" /></a>
+        </div>
+    </div>
+
+    <div id="content">
+
     </div>
 
     <script>
-      document.getElementById('vid').playbackRate = 1.7;
-      document.getElementById('vid').onended = function () {
-        document.getElementById('top-content').style.animationDelay = '0ms';
-        document.getElementById('top-content').style.animationName = 'arrow-video-finish';
-      }
-      var header = document.getElementById('header');
-      window.addEventListener('scroll', function () {
-        if (window.scrollY > 200) {
-          header.classList.add('hidden');
-        } else {
-          header.classList.remove('hidden');
-        }
-      });
+        document.getElementById('vid').playbackRate = 1.7;
+        document.getElementById('vid').onended = function() {
+                document.getElementsByClassName('top-content').style.animationDelay = '0ms';
+                document.getElementsByClassName('top-content').style.animationName = 'arrow-video-finish';
+            }
+            // var header = document.getElementById('header');
+            // window.addEventListener('scroll', function() {
+            //     if (window.scrollY > 200) {
+            //         header.classList.add('hidden');
+            //     } else {
+            //         header.classList.remove('hidden');
+            //     }
+            // });
     </script>
+
+
     <script>
-     jQuery(function($, undefined) {
-    $('#vid').terminal(function(cmd, term) {
-      if(cmd == "token"){
-        term.echo(JSON.stringify(token));
-      }
-      if(cmd == "help"){
-        term.echo('jjj');
-      }
-    }, {
-  
-        height: 300,
-        width: 450,
-        greetings: 'Welcome to shash.me\nterminal',
-        prompt: 'user@blog:~/ '
-    });
-});
-</script>
-  </body>
+        // Sql Interpreter
+        (function() {
+
+        });
+        // Array function 
+        function Array() {
+            return arguments;
+        }
+        // is_array function from php.js
+        function isArray(obj) {
+            return Object.prototype.toString.call(obj) === '[object Array]';
+        }
+        //print_r
+        function print_r(array, returnVal) { // eslint-disable-line camelcase
+            //  discuss at: http://locutus.io/php/print_r/
+            // original by: Michael White (http://getsprink.com)
+            // improved by: Ben Bryan
+            // improved by: Brett Zamir (http://brett-zamir.me)
+            // improved by: Kevin van Zonneveld (http://kvz.io)
+            //    input by: Brett Zamir (http://brett-zamir.me)
+            //   example 1: print_r(1, true)
+            //   returns 1: '1'
+            var echo = function() {
+                var args = Array.prototype.slice.call(arguments)
+                return console.log(args.join(' '))
+            }
+            var output = ''
+            var padChar = ' '
+            var padVal = 4
+            var _repeatChar = function(len, padChar) {
+                var str = ''
+                for (var i = 0; i < len; i++) {
+                    str += padChar
+                }
+                return str
+            }
+            var _formatArray = function(obj, curDepth, padVal, padChar) {
+                if (curDepth > 0) {
+                    curDepth++
+                }
+                var basePad = _repeatChar(padVal * curDepth, padChar)
+                var thickPad = _repeatChar(padVal * (curDepth + 1), padChar)
+                var str = ''
+                if (typeof obj === 'object' &&
+                    obj !== null &&
+                    obj.constructor) {
+                    str += 'Array\n' + basePad + '(\n'
+                    for (var key in obj) {
+                        if (Object.prototype.toString.call(obj[key]) === '[object Array]') {
+                            str += thickPad
+                            str += '['
+                            str += key
+                            str += '] => '
+                            str += _formatArray(obj[key], curDepth + 1, padVal, padChar)
+                        } else {
+                            str += thickPad
+                            str += '['
+                            str += key
+                            str += '] => '
+                            str += obj[key]
+                            str += '\n'
+                        }
+                    }
+                    str += basePad + ')\n'
+                } else if (obj === null || obj === undefined) {
+                    str = ''
+                } else {
+                    // for our "resource" class
+                    str = obj.toString()
+                }
+                return str
+            }
+            output = _formatArray(array, 0, padVal, padChar)
+            if (returnVal !== true) {
+                echo(output)
+                return true
+            }
+            return output
+        }
+        // preg_match
+        function preg_match(pattern, subject) {
+            var offset = (arguments.length >= 5) ? arguments[4] : 0;
+            var flags = (arguments.length >= 4) ? arguments[3] : 0;
+            var matches = (arguments.length >= 3) ? arguments[2] : null;
+
+            var result = null;
+            var regexp = new RegExp(pattern);
+            regexp.lastIndex = offset;
+
+            if ((result = regexp.exec(subject))) {
+                if (isArray(matches)) {
+                    matches.splice(0, matches.length);
+
+                    for (i = 0; i < result.length; i++) {
+                        matches.push((flags == 'PREG_OFFSET_CAPTURE') ? new Array(result[i].toString(), ((i == 0) ? result.index : -1)) : result[i].toString());
+                    }
+                }
+
+                return (1);
+            } else {
+                return (0);
+            }
+        }
+        var Tokenizer = {
+            _tokens: [],
+            _patterns: [],
+            _length: 0,
+            _matches: [],
+            tokenize: function(input) {
+                for (i = 0; i < _length; i++) {
+                    if (window.preg_match(_patterns, input, match)) {
+                        // this._patterns = {}
+                        this._matches.push(match[0]);
+                        try {
+                            Window.print_r(_matches);
+                        } catch (DOMException) {
+
+
+                        }
+
+                    }
+                }
+            }
+        }
+        var Lexer = {
+            _tokens: [
+
+            ],
+
+
+        }
+
+        var Parser = {
+
+        }
+        var Interpreter = {
+
+        }
+        jQuery(function($, undefined) {
+            $('#vid').terminal(function(cmd, term) {
+                if (cmd == "token") {
+                    term.echo(JSON.stringify(token));
+                }
+                if (cmd == "help") {
+                    term.echo('jjj');
+                }
+                if (cmd == "test") {
+                    Tokenizer._patterns =
+                        Array(
+                            '/[0-9]+(?:\.[0-9]+)?\b/'
+                        );
+                    window.Tokenizer.tokenize("12345");
+                }
+            }, {
+
+                height: 300,
+                width: 450,
+                greetings: 'Welcome to shash.me\nterminal',
+                prompt: 'user@blog:~$/ '
+            });
+        });
+    </script>
+</body>
+
 </html>
