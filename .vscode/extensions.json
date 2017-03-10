@@ -1,9 +1,0 @@
-{
-    // See http://go.microsoft.com/fwlink/?LinkId=827846
-    // for the documentation about the extensions.json format
-    "recommendations": [
-        // Extension identifier format: ${publisher}.${name}. Example: vscode.csharp
-
-    ],
-    "github-pr.accessToken": "1e861478a4899f1d4a0a31024c21b9353fb2b947"
-}
