@@ -10,7 +10,6 @@
     <link rel="shortcut icon" href="favicon.png" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/lunr.js/1.0.0/lunr.min.js"></script>
-    <script src="lexed.js"></script>
     <script>
         (function(c) {
             function g(a) {
@@ -239,144 +238,85 @@
 
 
     <script>
-        // Sql Interpreter
-        (function() {
+        // const regexpattern = `\"(.*?)\"`;
+        // var rules = {
+        //     regexpattern: function(text) {
+        //         return text;
+        //     }
+        // };
 
-        });
-        // Array function 
-        function Array() {
-            return arguments;
-        }
-        // is_array function from php.js
-        function isArray(obj) {
-            return Object.prototype.toString.call(obj) === '[object Array]';
-        }
-        //print_r
-        function print_r(array, returnVal) { // eslint-disable-line camelcase
-            //  discuss at: http://locutus.io/php/print_r/
-            // original by: Michael White (http://getsprink.com)
-            // improved by: Ben Bryan
-            // improved by: Brett Zamir (http://brett-zamir.me)
-            // improved by: Kevin van Zonneveld (http://kvz.io)
-            //    input by: Brett Zamir (http://brett-zamir.me)
-            //   example 1: print_r(1, true)
-            //   returns 1: '1'
-            var echo = function() {
-                var args = Array.prototype.slice.call(arguments)
-                return console.log(args.join(' '))
-            }
-            var output = ''
-            var padChar = ' '
-            var padVal = 4
-            var _repeatChar = function(len, padChar) {
-                var str = ''
-                for (var i = 0; i < len; i++) {
-                    str += padChar
-                }
-                return str
-            }
-            var _formatArray = function(obj, curDepth, padVal, padChar) {
-                if (curDepth > 0) {
-                    curDepth++
-                }
-                var basePad = _repeatChar(padVal * curDepth, padChar)
-                var thickPad = _repeatChar(padVal * (curDepth + 1), padChar)
-                var str = ''
-                if (typeof obj === 'object' &&
-                    obj !== null &&
-                    obj.constructor) {
-                    str += 'Array\n' + basePad + '(\n'
-                    for (var key in obj) {
-                        if (Object.prototype.toString.call(obj[key]) === '[object Array]') {
-                            str += thickPad
-                            str += '['
-                            str += key
-                            str += '] => '
-                            str += _formatArray(obj[key], curDepth + 1, padVal, padChar)
-                        } else {
-                            str += thickPad
-                            str += '['
-                            str += key
-                            str += '] => '
-                            str += obj[key]
-                            str += '\n'
-                        }
-                    }
-                    str += basePad + ')\n'
-                } else if (obj === null || obj === undefined) {
-                    str = ''
-                } else {
-                    // for our "resource" class
-                    str = obj.toString()
-                }
-                return str
-            }
-            output = _formatArray(array, 0, padVal, padChar)
-            if (returnVal !== true) {
-                echo(output)
-                return true
-            }
-            return output
-        }
-        // preg_match
-        function preg_match(pattern, subject) {
-            var offset = (arguments.length >= 5) ? arguments[4] : 0;
-            var flags = (arguments.length >= 4) ? arguments[3] : 0;
-            var matches = (arguments.length >= 3) ? arguments[2] : null;
+        // var test = function() {
+        //     // var str = document.body.innerHTML;
+        //     var str = `"hello"fhhjkkgg"hello"fhcafrfhello"hello"hhjjj"hello"`;
+        //     var l = new Lexed(str, null, rules);
 
-            var result = null;
-            var regexp = new RegExp(pattern);
-            regexp.lastIndex = offset;
+        //     var token;
+        //     var allText = '';
 
-            if ((result = regexp.exec(subject))) {
-                if (isArray(matches)) {
-                    matches.splice(0, matches.length);
+        //     try {
+        //         while ((token = l.lex()) != Lexed.EOF) {
+        //             allText += token;
+        //         }
+        //     } catch (e) {
+        //         console.log(e);
+        //     }
 
-                    for (i = 0; i < result.length; i++) {
-                        matches.push((flags == 'PREG_OFFSET_CAPTURE') ? new Array(result[i].toString(), ((i == 0) ? result.index : -1)) : result[i].toString());
-                    }
-                }
-
-                return (1);
-            } else {
-                return (0);
-            }
-        }
-        var Tokenizer = {
-            _tokens: [],
+        //     // document.getElementById('txt').value = allText;
+        //     console.log(allText);
+        //     return allText;
+        // };
+        var lexer = {
             _patterns: [],
-            _length: 0,
-            _matches: [],
-            tokenize: function(input) {
-                for (i = 0; i < _length; i++) {
-                    if (window.preg_match(_patterns, input, match)) {
-                        // this._patterns = {}
-                        this._matches.push(match[0]);
-                        try {
-                            Window.print_r(_matches);
-                        } catch (DOMException) {
+            _tokens: [],
+            _delimiter: '#',
 
+            addrule: function(pattern, name) {
+                this._patterns.push({
+                    regex: pattern,
+                    type_name: name
+                })
+            },
+            lex: function(subject) {
 
-                        }
-
+                // var regex;
+                //regex[0] = /\"(.*?)\"/g;
+                const str = `"hello"fhhjkkgg"hello"fhcafrfhello"hello"hhjjj"hello"`;
+                let m;
+                for (i = 0; i < this._patterns.length; i++) {
+                    match = this._patterns[i].regex.exec(subject)
+                    if (match[0] !== null) {
+                        this._tokens.push({
+                            name: this._patterns[i].type_name,
+                            token: match[0]
+                        })
+                        subject = subject.replace(new RegExp('^(' + match[0] + ')'), '')
+                        match = null;
+                        continue;
+                        // console.log(match)
+                        // subject = subject.replace((this._delimeter + "^" + match[0] + '').replace(new RegExp('[.\\\\+*?\\[\\^\\]$(){}=!<>|:\\' + (this._delimiter || '') + '-]', 'g'), '\\$&') + this._delimiter, '');
+                    } else {
+                        console.log("Error")
                     }
                 }
+
+                console.log(this._tokens)
+                console.log(subject)
+                    // while ((m = regex[0].exec(str)) !== null) {
+                    //     // This is necessary to avoid infinite loops with zero-width matches
+                    //     if (m.index === regex.lastIndex) {
+                    //         regex.lastIndex++;
+                    //     }
+
+                //     // The result can be accessed through the `m`-variable.
+                //     m.forEach((match, groupIndex) => {
+                //         console.log(`Found match, group ${groupIndex}: ${match}`);
+                //     });
+                // }
             }
-        }
-        var Lexer = {
-            _tokens: [
-
-            ],
-
 
         }
 
-        var Parser = {
 
-        }
-        var Interpreter = {
-
-        }
         jQuery(function($, undefined) {
             $('#vid').terminal(function(cmd, term) {
                 if (cmd == "token") {
@@ -386,6 +326,16 @@
                     term.echo('jjj');
                 }
                 if (cmd == "test") {
+                    //term.set_prompt('mysql> ')
+                    // var regex = [];
+                    // regex[0] = /\"(.*?)\"/g;
+                    var regex = /\"(.*?)\"/g;
+                    lexer.addrule(regex, 'STRING')
+                        //lexer.addrule(regex, 'NA')
+                    lexer.lex(`fhhjkkgg"hello"fhcafrfhello"hello"hhjjj"hello"`)
+                    term.echo(
+                        lexer._patterns.length
+                    );
                     // Tokenizer._patterns =
                     //     Array(
                     //         '/[0-9]+(?:\.[0-9]+)?\b/'
