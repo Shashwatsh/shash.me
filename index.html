@@ -170,8 +170,8 @@
         }
         
         .avatar {
-            width: 100px;
-            height: 100px;
+            width: 120px;
+            height: 120px;
             position: relative;
             left: -50%;
         }
@@ -268,39 +268,35 @@
         var lexer = {
             _patterns: [],
             _tokens: [],
-            _delimiter: '#',
-
             addrule: function(pattern, name) {
                 this._patterns.push({
-                    regex: pattern,
-                    type_name: name
+                    regex: new Regexp('^(' + pattern + ')'),
+                    pattern_name: name
                 })
             },
             lex: function(subject) {
-
-                // var regex;
-                //regex[0] = /\"(.*?)\"/g;
-                const str = `"hello"fhhjkkgg"hello"fhcafrfhello"hello"hhjjj"hello"`;
-                let m;
+    
                 for (i = 0; i < this._patterns.length; i++) {
-                    match = this._patterns[i].regex.exec(subject)
-                    if (match[0] !== null) {
-                        this._tokens.push({
-                            name: this._patterns[i].type_name,
-                            token: match[0]
-                        })
-                        subject = subject.replace(new RegExp('^(' + match[0] + ')'), '')
-                        match = null;
-                        continue;
-                        // console.log(match)
-                        // subject = subject.replace((this._delimeter + "^" + match[0] + '').replace(new RegExp('[.\\\\+*?\\[\\^\\]$(){}=!<>|:\\' + (this._delimiter || '') + '-]', 'g'), '\\$&') + this._delimiter, '');
-                    } else {
-                        console.log("Error")
+                    while (match = this._patterns[i].regex.exec(subject)) {
+                        if (match[0] !== null) {
+                            this._tokens.push({
+                                name: this._patterns[i].pattern_name,
+                                token: match[0]
+                            })
+                            subject = subject.replace(new RegExp('^(' + match[0] + ')'), '')
+                            this._log.push(subject)
+                               
+                        } else if (match[0] == null) {
+                            var err = this._patterns[i]
+                            console.log(`Error occured at definition ${err}`)
+                        }
                     }
                 }
+           }
 
-                console.log(this._tokens)
-                console.log(subject)
+        }
+                // console.log(this._tokens)
+                // console.log(subject)
                     // while ((m = regex[0].exec(str)) !== null) {
                     //     // This is necessary to avoid infinite loops with zero-width matches
                     //     if (m.index === regex.lastIndex) {
@@ -312,9 +308,7 @@
                 //         console.log(`Found match, group ${groupIndex}: ${match}`);
                 //     });
                 // }
-            }
-
-        }
+ 
 
 
         jQuery(function($, undefined) {
@@ -332,9 +326,9 @@
                     var regex = /\"(.*?)\"/g;
                     lexer.addrule(regex, 'STRING')
                         //lexer.addrule(regex, 'NA')
-                    lexer.lex(`fhhjkkgg"hello"fhcafrfhello"hello"hhjjj"hello"`)
                     term.echo(
-                        lexer._patterns.length
+                        //lexer._tokens.forEach()
+                        console.log(lexer._log)
                     );
                     // Tokenizer._patterns =
                     //     Array(
